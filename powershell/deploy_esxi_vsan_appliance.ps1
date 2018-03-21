@@ -1,15 +1,15 @@
 # William Lam
 # www.virtuallyghetto.com
 
-$vcname = "192.168.1.150"
-$vcuser = "administrator@vghetto.local"
-$vcpass = "VMware1!"
+$vcname = "172.16.168.21"
+$vcuser = "staging.local\jbollman"
+$vcpass = ""
 
-$ovffile = "Z:\Desktop\Nested_ESXi_Appliance.ovf"
+$ovffile = "D:\ISO\VMWare\Nested_ESXi_Appliance.ovf"
 
-$cluster = "MacMini-Cluster"
-$vmnetwork = "VM Network"
-$datastore = "mini-local-datastore-1"
+$cluster = "PROD-STG-CL1"
+$vmnetwork = Get-VirtualPortGroup -name 'VM Network'
+$datastore = "STGP-5400_01_STD_0"
 $iprange = "192.168.1"
 $netmask = "255.255.255.0"
 $gateway = "192.168.1.1"
@@ -30,7 +30,9 @@ $cluster_ref = Get-Cluster -Name $cluster
 $vmhost_ref = $cluster_ref | Get-VMHost | Select -First 1
 
 $ovfconfig = Get-OvfConfiguration $ovffile
-$ovfconfig.NetworkMapping.VM_Network.value = $network_ref
+
+#$ovfconfig.NetworkMapping.VM_Network.value = $network_ref
+$ovfconfig.NetworkMapping.VM_Network.Value = Get-VirtualPortGroup -name $vmnetwork -VMHost $vmhost_ref
 
 190..192 | Foreach {
     $ipaddress = "$iprange.$_"
